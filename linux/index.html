@@ -53,7 +53,7 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Linux</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#system-boot">System Boot</a>
+    <li class="toctree-l2"><a class="reference internal" href="#system-basics">System Basics</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#filesystem">Filesystem</a>
     </li>
@@ -126,7 +126,7 @@
             <div class="section">
               
                 <h1 id="linux-hacking">Linux Hacking</h1>
-<h2 id="system-boot">System Boot</h2>
+<h2 id="system-basics">System Basics</h2>
 <pre><code class="language-bash"># rescue / emergency modes on GRUB startup
 systemd.unit=rescue|emergency
 
@@ -134,14 +134,14 @@ systemd.unit=rescue|emergency
 systemctl list-unit-files --type=service --all
 
 # get service config
-systemctl cat {service}
+systemctl cat SERVICE
 
 # get service status
-systemctl status {service}
+systemctl status SERVICE
 
 # manage service state
-systemctl start|stop|restart|reload {service}
-systemctl enable|disable {service}
+systemctl start|stop|restart|reload SERVICE
+systemctl enable|disable SERVICE
 
 # get last system logs
 journalctl -e
@@ -163,41 +163,41 @@ lsblk -f
 df -h
 
 # create a destination folder
-sudo mkdir -p /media/dst
+sudo mkdir -p /media/DST
 
 # mount a partition
-sudo mount /dev/sda2 /media/dst
+sudo mount /dev/SRC /media/DST
 
 # mount in read only mode
-sudo mount -r /dev/sda2 /media/dst
+sudo mount -r /dev/SRC /media/DST
 
 # mount a partition with a specified format
-sudo mount -t ext4|vfat|ntfs /dev/sda2 /media/dst
+sudo mount -t ext4|vfat|ntfs /dev/SRC /media/DST
 
 # mount a disk image
-sudo mount -o loop ubuntu-cdrom.iso /media/dst
+sudo mount -o loop DISK_FILE /media/DST
 
 # unmount a partition
-sudo umount /media/dst
+sudo umount /media/DST
 
 # get automated mounts
 cat /etc/fstab
 
 # format a partition
-sudo mkfs.vfat -n {label} /dev/sda2
+sudo mkfs.vfat -n LABEL /dev/SRC
 </code></pre>
 <h2 id="network-configuration">Network Configuration</h2>
 <pre><code class="language-bash"># get info about network interfaces
 ip -br a
 
 # assign ip addr to interface
-ip a add {ip_addr/mask} dev {interface}
+ip a add IP/MASK dev IFACE
 
 # remove ip addr from interface
-ip a del {ip_addr} dev {interface}
+ip a del IP dev IFACE
 
 # change interface state
-ip link set dev {interface} up|down
+ip link set dev IFACE up|down
 
 # get ARP cache
 ip n show
@@ -206,14 +206,14 @@ ip n show
 ip r
 
 # add a new route
-ip r add {net/mask} via {gateway_ip}
-ip r add default {net/mask} via {gateway_ip}
+ip r add IP/MASK via GATEWAY_IP
+ip r add default IP/MASK via GATEWAY_IP
 
 # delete a route
 ip r del default
 
 # change MAC addr
- ip link set dev {interface} address {mac_addr}
+ip link set dev IFACE address MAC_ADDR
 </code></pre>
 <h2 id="compilation">Compilation</h2>
 <pre><code class="language-bash"># get system version
@@ -237,35 +237,35 @@ make uninstall
 </code></pre>
 <h2 id="archiving-compression">Archiving &amp; Compression</h2>
 <pre><code class="language-bash"># create a basic archive
-tar -cvf {archive.tar} {files}
+tar -cvf ARCHIVE.tar FILES
 
 # extract from a basic archive
-tar -xvf {archive.tar}
+tar -xvf ARCHIVE.tar
 
 # create and compress a gzip archive
-tar -zcvf {archive.tar.gz} {files}
+tar -zcvf ARCHIVE.tar.gz FILES
 
 # extract from a gzip archive
-tar -zxvf {archive.tar.gz}
+tar -zxvf ARCHIVE.tar.gz
 
 # create and compress a bzip2 archive
-tar -jcvf {archive.tar.bz2} {files}
+tar -jcvf ARCHIVE.tar.bz2 FILES
 
 # extract from a bzip2 archive
-tar -jxvf {archive.tar.bz2}
+tar -jxvf ARCHIVE.tar.bz2
 
 # create and compress a lzma archive
-tar -Jcvf {archive.tar.xz} {files}
+tar -Jcvf ARCHIVE.tar.xz FILES
 
 # extract from a lzma archive
-tar -Jxvf {archive.tar.xz}
+tar -Jxvf ARCHIVE.tar.xz
 
 # create and compress a zip archive
-zip {archive.zip} {files}
-zip -r {archive.zip} {directory}
+zip ARCHIVE.zip FILES
+zip -r ARCHIVE.zip DIR
 
 # extract from a zip archive
-unzip {archive.zip} -d {directory}
+unzip ARCHIVE.zip -d DIR
 </code></pre>
 <h2 id="users-groups">Users &amp; Groups</h2>
 <pre><code class="language-bash"># get users list
@@ -275,30 +275,30 @@ cat /etc/passwd | awk -F: '{print $ 1}'
 cat /etc/group | awk -F: '{print $ 1}'
 
 # create a user
-sudo useradd {user}
-sudo passwd {user}
+sudo useradd USER
+sudo passwd USER
 
 # create a group
-sudo groupadd {group}
+sudo groupadd GROUP
 
 # delete a user
-sudo userdel -r {user}
+sudo userdel -r USER
 
 # delete a group
-sudo groupdel {group}
+sudo groupdel GROUP
 
 # add user to group
-sudo usermod -aG {group} {user}
+sudo usermod -aG GROUP USER
 
 # remove user from group
-sudo gpasswd -d {user} {group}
+sudo gpasswd -d USER GROUP
 
 # change user default shell
-sudo usermod -s /bin/sh {user}
+sudo usermod -s /bin/sh USER
 
 # get user membership
-groups {user}
-id {user}
+groups USER
+id USER
 </code></pre>
 <h2 id="root-access">Root Access</h2>
 <pre><code class="language-bash"># login with root account in the current directory
@@ -308,7 +308,7 @@ su
 su -
 
 # run an action as root
-sudo {action}
+sudo CMD
 
 # get root actions allowed
 sudo -l
@@ -318,30 +318,24 @@ visudo /etc/sudoers
 </code></pre>
 <h2 id="ssh-secure-shell">SSH (Secure Shell)</h2>
 <pre><code class="language-bash"># connection
-ssh {user}@{host} -p {port}
+ssh USER@HOST -p PORT
 </code></pre>
 <h2 id="scp-secure-copy">SCP (Secure Copy)</h2>
 <pre><code class="language-bash"># copy local file to remote destination
-scp {src} {user}@{host}:{dst}
+scp SRC USER@HOST:DST
 
 # copy local directory to remote destination
-scp -r {src} {user}@{host}:{dst}
+scp -r SRC USER@HOST:DST
 
 # copy remote data to local destination
-scp {user}@{host}:{src} {dst}
+scp USER@HOST:SRC DST
 </code></pre>
 <h2 id="ftp-file-transfer-protocol">FTP (File Transfer Protocol)</h2>
 <pre><code class="language-bash"># connection
-ftp {host}
-
-# change user session
-&gt; user
-
-# download a file
-&gt; get {file}
-
-# upload a file
-&gt; put {file}
+ftp HOST
+    &gt; user
+    &gt; get FILE
+    &gt; put FILE
 </code></pre>
               
             </div>
@@ -363,7 +357,7 @@ ftp {host}
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2021 <a href="https://ctf-roadmap.github.io/profile/">amorix</a>.</p>
+      <p>Copyright &copy; 2021 <a href="https://ctf-roadmap.github.io/author/">amorix</a>.</p>
     
   </div>
 

